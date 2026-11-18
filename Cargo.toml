@@ -1,0 +1,24 @@
+[package]
+name = "splyce"
+version = "0.1.0"
+edition = "2021"
+authors = ["thebothyt"]
+description = "Video and motion graphics editor for Android"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+eframe = { version = "0.29", default-features = false, features = ["glow", "android-native-activity"] }
+log = "0.4"
+winit = { version = "0.30", default-features = false, features = ["android-native-activity"] }
+
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.14"
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+strip = true

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Diamond split by a curved blade -->
+    <path
+        android:fillColor="#CFBCFF"
+        android:pathData="M54,30 L78,54 Q66,56 54,78 Q54,54 54,30 Z" />
+    <path
+        android:fillColor="#9A82DB"
+        android:pathData="M54,30 L30,54 L54,78 Q54,54 54,30 Z" />
+</vector>
