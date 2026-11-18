@@ -20,7 +20,13 @@ jobs:
       - name: Install NDK and platform
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;26.3.11579264" "platforms;android-34" "build-tools;34.0.0"
+          # The NDK download occasionally gets cut off, so retry a few times
+          for attempt in 1 2 3; do
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;26.3.11579264" "platforms;android-34" "build-tools;34.0.0" && break
+            [ "$attempt" = 3 ] && exit 1
+            rm -rf "$ANDROID_HOME/ndk/26.3.11579264"
+            sleep 10
+          done
 
       - uses: dtolnay/rust-toolchain@stable
         with:
