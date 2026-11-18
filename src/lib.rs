@@ -1,16 +1,31 @@
-use eframe::egui;
-
-#[cfg(target_os = "android")]
-use winit::platform::android::EventLoopBuilderExtAndroid;
-
+mod app;
+mod project;
 mod theme;
 
 #[cfg(target_os = "android")]
+use winit::platform::android::{activity::AndroidApp, EventLoopBuilderExtAndroid};
+
+#[cfg(target_os = "android")]
 #[no_mangle]
-fn android_main(app: winit::platform::android::activity::AndroidApp) {
+fn android_main(app: AndroidApp) {
     android_logger::init_once(
         android_logger::Config::default().with_max_level(log::LevelFilter::Info),
     );
+
+    let data_dir = app
+        .internal_data_path()
+        .unwrap_or_else(std::env::temp_dir)
+        .join("projects");
+
+    // NativeActivity never raises the keyboard on its own
+    let ime = app.clone();
+    let keyboard: Box<dyn Fn(bool)> = Box::new(move |show| {
+        if show {
+            ime.show_soft_input(true);
+        } else {
+            ime.hide_soft_input(true);
+        }
+    });
 
     // eframe 0.29 takes the activity through the event loop builder hook
     let options = eframe::NativeOptions {
@@ -23,33 +38,11 @@ fn android_main(app: winit::platform::android::activity::AndroidApp) {
     if let Err(err) = eframe::run_native(
         "Splyce",
         options,
-        Box::new(|cc| {
+        Box::new(move |cc| {
             theme::apply(&cc.egui_ctx);
-            Ok(Box::new(SplyceApp::default()))
+            Ok(Box::new(app::SplyceApp::new(data_dir, keyboard)))
         }),
     ) {
         log::error!("failed to start: {err}");
-    }
-}
-
-#[derive(Default)]
-struct SplyceApp {
-    taps: u32,
-}
-
-impl eframe::App for SplyceApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ui.add_space(64.0);
-            ui.vertical_centered(|ui| {
-                ui.heading("Splyce");
-                ui.label("Build pipeline check");
-                ui.add_space(24.0);
-                if ui.button("Tap me").clicked() {
-                    self.taps += 1;
-                }
-                ui.label(format!("Taps: {}", self.taps));
-            });
-        });
     }
 }

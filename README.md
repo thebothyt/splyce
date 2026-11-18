@@ -2,7 +2,7 @@
 
 Hi, I'm thebothyt, and Splyce is my take on a video and motion graphics editor for Android, written in Rust. If you like making edits on your phone, you're welcome here, whether as a creator or a contributor.
 
-Right now this is the project skeleton: it builds to an installable APK and opens a themed screen. The editor itself is being built up one piece at a time.
+Right now Splyce has a working project hub: create projects with an aspect ratio, resolution, frame rate and canvas background, search and filter them, duplicate or delete them, and they're saved on your device. The editor itself is being built up one piece at a time.
 
 ## Planned features
 
