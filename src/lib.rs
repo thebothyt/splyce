@@ -1,5 +1,8 @@
 use eframe::egui;
 
+#[cfg(target_os = "android")]
+use winit::platform::android::EventLoopBuilderExtAndroid;
+
 mod theme;
 
 #[cfg(target_os = "android")]
@@ -9,8 +12,11 @@ fn android_main(app: winit::platform::android::activity::AndroidApp) {
         android_logger::Config::default().with_max_level(log::LevelFilter::Info),
     );
 
+    // eframe 0.29 takes the activity through the event loop builder hook
     let options = eframe::NativeOptions {
-        android_app: Some(app),
+        event_loop_builder: Some(Box::new(move |builder| {
+            builder.with_android_app(app);
+        })),
         ..Default::default()
     };
 
